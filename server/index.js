@@ -12,7 +12,7 @@ app.put('/reviews/:review_id/helpful', (req, res) => {
       console.log(err)
       res.status(500)
     } else {
-      res.status(204).send('Succesfully marked review as helpful')
+      res.status(201).send('Succesfully marked review as helpful')
     }
   })
 })
@@ -23,14 +23,15 @@ app.put('/reviews/:review_id/report', (req, res) => {
       console.log(err)
       res.status(500)
     } else {
-      res.status(204).send('Succesfully reported the review')
+      res.status(201).send('Succesfully reported the review')
     }
   })
 })
 
 app.get('/reviews/meta/:product_id', (req, res) => {
-  console.log('Request Received.')
-  api.getMetadata(req.query.product_id, (err, meta) => {
+  console.log('req.params: ', req.params)
+  api.getMetadata(req.params.product_id, (err, meta) => {
+    console.log('meta:', meta)
     if (err) { console.log (err); }
     var data = meta.rows[0];
 
@@ -99,14 +100,14 @@ app.get('/reviews/meta/:product_id', (req, res) => {
 })
 
  app.get('/reviews/:product_id/:page?/:count?/:sort?', (req, res) => {
-  api.getReviews(req.query.product_id, (err, reviews) => {
+  api.getReviews(req.params.product_id, (err, reviews) => {
     if (err) { console.log (err); }
 
-    var page = req.query.page || 1
-    var count = req.query.count || 5
+    var page = req.params.page || 1
+    var count = req.params.count || 5
     var stagedReviews = {};
     var polishedData = {
-      product: `${req.query.product_id}`,
+      product: `${req.params.product_id}`,
       page: page,
       count: count,
       results: []

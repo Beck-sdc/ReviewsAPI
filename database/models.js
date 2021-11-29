@@ -111,6 +111,6 @@ module.exports = {
         if (error) { callback (error); }
         callback (null, response);
     })
-}
+  }
 
 }
