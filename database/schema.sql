@@ -65,6 +65,8 @@ CREATE INDEX product_id_photos ON photos USING hash (product_id);
 -- psql postgres
 -- \c sdc;
 -- SELECT pg_catalog.setval(pg_get_serial_sequence('photos', 'id'), MAX(id)) FROM photos;
+-- SELECT pg_catalog.setval(pg_get_serial_sequence('reviews', 'id'), MAX(id)) FROM reviews;
+
 
 
 -- start instance of PostgreSQL

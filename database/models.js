@@ -2,8 +2,8 @@ const db = require('./index.js');
 
 module.exports = {
 
-  async getReviews (product_id, callback) {
-    await db.query('SELECT\
+  getReviews (product_id, callback) {
+    db.query('SELECT\
                       reviews.reported,\
                       reviews.id AS review_id,\
                       reviews.rating,\
@@ -18,7 +18,7 @@ module.exports = {
                       photos.review_id AS origin_id,\
                       photos.url \
                     FROM photos \
-                    LEFT JOIN reviews \
+                    RIGHT OUTER JOIN reviews \
                     ON photos.product_id = reviews.product_id \
                     WHERE reviews.product_id = $1\
                     ORDER BY review_id, photo_id;', [product_id],

@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 3002
 const api = require('../database/models.js')
 
 app.use(express.json());
@@ -28,10 +28,9 @@ app.put('/reviews/:review_id/report', (req, res) => {
   })
 })
 
-app.get('/reviews/meta/:product_id', (req, res) => {
-  console.log('req.params: ', req.params)
-  api.getMetadata(req.params.product_id, (err, meta) => {
-    console.log('meta:', meta)
+app.get('/reviews/meta/', (req, res) => { // https://localhost:3002/reviews/meta/1
+  api.getMetadata(req.query.product_id, (err, meta) => {
+    //console.log('meta:', meta)
     if (err) { console.log (err); }
     var data = meta.rows[0];
 
@@ -86,12 +85,12 @@ app.get('/reviews/meta/:product_id', (req, res) => {
         false: data.recommend_false
       },
       characteristics: {
-        fit: fit || null,
-        size: size || null,
-        width: width || null,
-        quality: quality || null,
-        comfort: comfort || null,
-        length: length || null
+        Fit: fit || null,
+        Size: size || null,
+        Width: width || null,
+        Quality: quality || null,
+        Comfort: comfort || null,
+        Length: length || null
       }
     }
 
@@ -99,21 +98,22 @@ app.get('/reviews/meta/:product_id', (req, res) => {
   })
 })
 
- app.get('/reviews/:product_id/:page?/:count?/:sort?', (req, res) => {
-  api.getReviews(req.params.product_id, (err, reviews) => {
+ app.get('/reviews/', (req, res) => {
+  api.getReviews(req.query.product_id, (err, reviews) => {
     if (err) { console.log (err); }
 
-    var page = req.params.page || 1
-    var count = req.params.count || 5
+    var page = req.query.page || 1
+    var count = req.query.count || 5
     var stagedReviews = {};
     var polishedData = {
-      product: `${req.params.product_id}`,
+      product: `${req.query.product_id}`,
       page: page,
       count: count,
       results: []
     }
 
     reviews.rows.forEach( element => {
+      var date = new Date(Number(element.date)).toISOString();
       if (!element.reported) {
         var data = {
           review_id: element.review_id,
@@ -122,7 +122,7 @@ app.get('/reviews/meta/:product_id', (req, res) => {
           recommend: element.recommend,
           response: element.response,
           body: element.body,
-          date: element.date,
+          date: date,
           reviewer_name: element.reviewer_name,
           helpfulness: element.helpfulness,
           photos: []
@@ -143,7 +143,6 @@ app.get('/reviews/meta/:product_id', (req, res) => {
       polishedData.results.push(stagedReviews[key]);
     }
 
-    console.log('stagedReviews: ', stagedReviews[5])
     res.status(200).send(polishedData);
   })
 })
