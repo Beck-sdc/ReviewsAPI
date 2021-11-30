@@ -16,10 +16,10 @@ module.exports = {
                       reviews.helpfulness,\
                       photos.id AS photo_id,\
                       photos.review_id AS origin_id,\
-                      photos.url \
-                    FROM photos \
-                    RIGHT OUTER JOIN reviews \
-                    ON photos.product_id = reviews.product_id \
+                      photos.url\
+                    FROM reviews\
+                    LEFT JOIN photos\
+                    ON reviews.product_id = photos.product_id\
                     WHERE reviews.product_id = $1\
                     ORDER BY review_id, photo_id;', [product_id],
       (error, reviews) => {

@@ -28,7 +28,7 @@ app.put('/reviews/:review_id/report', (req, res) => {
   })
 })
 
-app.get('/reviews/meta/', (req, res) => { // https://localhost:3002/reviews/meta/1
+app.get('/reviews/meta/', (req, res) => {
   api.getMetadata(req.query.product_id, (err, meta) => {
     //console.log('meta:', meta)
     if (err) { console.log (err); }
