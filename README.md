@@ -4,7 +4,8 @@ API for handling requests from the ratings and reviews section of project catwal
 1. In the terminal, navigate to the root directory for this repo.
 2. Type "npm install" into terminal.
 3. Rename dbpassword.example.js to dbpassword and enter your postgres password.
-4. Use pg_dump/pg_restore to load databases.
+4. Use pg_dump/pg_restore to load databases. Make sure username and password are correct, postgres server is connected to port 5432, your server is listening on port 3000, and you have already run a redirect command on Ubuntu to redirect from the public IP port 80 to your port 3000.
+
 
 If working with raw data files, load data via the following steps:
 
