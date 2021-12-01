@@ -1,11 +1,10 @@
-const { password } = require('./dbpassword.js');
 const { Pool } = require('pg');
 
 const dbConnection = new Pool({
-  user: 'brettroberts',
-  password: `${password}`,
+  user: 'postgres',
+  password: `beck`,
   database: 'sdc',
-  host: 'localhost',
+  host: 'ENTER_DATABASE_IPV4_URL_HERE',
   port: 5432,
 });
 
