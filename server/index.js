@@ -6,6 +6,13 @@ const api = require('../database/models.js')
 app.use(express.json());
 app.use(express.urlencoded());
 
+// LOADER
+// loaderio-d0b659a7d7c026441de4eb46063c8ceb
+
+app.get(`/loaderio-d0b659a7d7c026441de4eb46063c8ceb.txt`, (req, res) => {
+  res.send('loaderio-d0b659a7d7c026441de4eb46063c8ceb');
+   })
+
 app.put('/reviews/:review_id/helpful', (req, res) => {
   api.updateHelpful(req.params.review_id, (err, response) => {
     if(err) {
