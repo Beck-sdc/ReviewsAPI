@@ -32,44 +32,47 @@ app.get('/reviews/meta/', (req, res) => {
   api.getMetadata(req.query.product_id, (err, meta) => {
     //console.log('meta:', meta)
     if (err) { console.log (err); }
-    var data = meta.rows[0];
+    var data = meta.rows[0] || null
 
-    if (data.fit_id || data.fit_value) {
-      var fit = {
-        id: data.fit_id,
-        value: data.fit_value
+    if (!data) {
+      console.log(data)
+    } else {
+      if (data.fit_id || data.fit_value) {
+        var fit = {
+          id: data.fit_id,
+          value: data.fit_value
+        }
       }
-    }
-    if (data.size_id || data.size_value) {
-      var size = {
-        id: data.size_id,
-        value: data.size_value
+      if (data.size_id || data.size_value) {
+        var size = {
+          id: data.size_id,
+          value: data.size_value
+        }
       }
-    }
-    if (data.width_id || data.width_value) {
-      var width = {
-        id: data.width_id,
-        value: data.width_value
+      if (data.width_id || data.width_value) {
+        var width = {
+          id: data.width_id,
+          value: data.width_value
+        }
       }
-    }
-    if (data.quality_id || data.quality_value) {
-      var quality = {
-        id: data.quality_id,
-        value: data.quality_value
+      if (data.quality_id || data.quality_value) {
+        var quality = {
+          id: data.quality_id,
+          value: data.quality_value
+        }
       }
-    }
-    if (data.comfort_id || data.comfort_value) {
-      var comfort = {
-        id: data.comfort_id,
-        value: data.comfort_value
+      if (data.comfort_id || data.comfort_value) {
+        var comfort = {
+          id: data.comfort_id,
+          value: data.comfort_value
+        }
       }
-    }
-    if (data.length_id || data.length_value) {
-      var length = {
-        id: data.length_id,
-        value: data.length_value
+      if (data.length_id || data.length_value) {
+        var length = {
+          id: data.length_id,
+          value: data.length_value
+        }
       }
-    }
 
     var polishedData = {
       product_id: data.id,
@@ -93,7 +96,7 @@ app.get('/reviews/meta/', (req, res) => {
         Length: length || null
       }
     }
-
+  }
     res.status(200).json(polishedData);
   })
 })
@@ -112,32 +115,36 @@ app.get('/reviews/meta/', (req, res) => {
       results: []
     }
 
-    reviews.rows.forEach( element => {
-      var date = new Date(Number(element.date)).toISOString();
-      if (!element.reported) {
-        var data = {
-          review_id: element.review_id,
-          rating: element.rating,
-          summary: element.summary,
-          recommend: element.recommend,
-          response: element.response,
-          body: element.body,
-          date: date,
-          reviewer_name: element.reviewer_name,
-          helpfulness: element.helpfulness,
-          photos: []
-        }
+    if (!reviews) {
+      console.log('ERROR. Reviews: ', reviews)
+    } else {
+      reviews.rows.forEach( element => {
+        var date = new Date(Number(element.date)).toISOString();
+        if (!element.reported) {
+          var data = {
+            review_id: element.review_id,
+            rating: element.rating,
+            summary: element.summary,
+            recommend: element.recommend,
+            response: element.response,
+            body: element.body,
+            date: date,
+            reviewer_name: element.reviewer_name,
+            helpfulness: element.helpfulness,
+            photos: []
+          }
 
-        if (element.origin_id !== element.review_id) { // i.e. has no photos
-          stagedReviews[element.review_id] = data
-        } else if (element.origin_id === element.review_id && !stagedReviews[element.review_id]) { // has photos, is not already staged
-          data.photos.push({ id: element.photo_id, url: element.url })
-          stagedReviews[element.review_id] = data;
-        } else if (element.origin_id === element.review_id && stagedReviews[element.review_id]) { // has photos, is already staged
-          stagedReviews[element.review_id].photos.push({ id: element.photo_id, url: element.url })
+          if (element.origin_id !== element.review_id) { // i.e. has no photos
+            stagedReviews[element.review_id] = data
+          } else if (element.origin_id === element.review_id && !stagedReviews[element.review_id]) { // has photos, is not already staged
+            data.photos.push({ id: element.photo_id, url: element.url })
+            stagedReviews[element.review_id] = data;
+          } else if (element.origin_id === element.review_id && stagedReviews[element.review_id]) { // has photos, is already staged
+            stagedReviews[element.review_id].photos.push({ id: element.photo_id, url: element.url })
+          }
         }
-      }
-    })
+      })
+    }
 
     for (key in stagedReviews) {
       polishedData.results.push(stagedReviews[key]);
@@ -154,7 +161,34 @@ app.post('/reviews', (req, res) => {
     api.getMetadata(req.body.product_id, (err, meta) => {
       if (err) { console.log(err); }
 
-      data = meta.rows[0];
+      data = meta.rows[0] || {
+        id: req.body.product_id,
+        rating_1: 0,
+        rating_2: 0,
+        rating_3: 0,
+        rating_4: 0,
+        rating_5: 0,
+        recommend_true: 0,
+        recommend_false: 0,
+        fit_id: null,
+        fit_value: null,
+        fit_counter: null,
+        size_id: null,
+        size_value: null,
+        size_counter: null,
+        width_id: null,
+        width_value: null,
+        width_counter: null,
+        quality_id: null,
+        quality_value: null,
+        quality_counter: null,
+        comfort_id: null,
+        comfort_value: null,
+        comfort_counter: null,
+        length_id: null,
+        length_value: null,
+        length_counter: null
+      } ;
       chars = req.body.characteristics
 
       data[`rating_${req.body.rating}`]++

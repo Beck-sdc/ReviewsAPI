@@ -2,8 +2,8 @@ const db = require('./index.js');
 
 module.exports = {
 
-  getReviews (product_id, callback) {
-    db.query('SELECT\
+  async getReviews (product_id, callback) {
+    await db.query('SELECT\
                       reviews.reported,\
                       reviews.id AS review_id,\
                       reviews.rating,\
@@ -41,7 +41,7 @@ module.exports = {
     var date = Date.now();
     await db.query('INSERT INTO reviews\
                     (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)\
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [body.product_id, body.rating, `"${date}"`, body.summary, body.body, body.recommend, false, body.name, body.email, null, 0],
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [body.product_id, body.rating, `${date}`, body.summary, body.body, body.recommend, false, body.name, body.email, null, 0],
       (error, response) => {
         if (error) { callback (error); }
         callback (null, response);
